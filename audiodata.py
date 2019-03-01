@@ -14,14 +14,14 @@ seventh10 = []
 eighth10 = []
 nineth10 = []
 tenth10 =[]
-
+song_length_sec = 1000
 #http://app.rawgraphs.io/
 
 p=pyaudio.PyAudio()
 stream=p.open(format=pyaudio.paInt16,channels=1,rate=RATE,input = True, output = True,
               frames_per_buffer=CHUNK)
 
-for i in range(int(120*RATE/1024)): #go for around  240 seconds, 23-24 readings per second 
+for i in range(int((song_length_sec/2)*RATE/1024)): #go for around song_length_sec seconds, 23-24 readings per second (Rate*30 per min)
 	data = np.frombuffer(stream.read(CHUNK),dtype=np.int16)
 	peak=np.average(np.abs(data))*2
 	bars="#"*int(50*peak/2**12)
@@ -55,16 +55,12 @@ for g in sdata:
 		tenth10.append(g)
 
 beats = []
-beats2 = []
 dif = 0
 for w in range (2,len(sdata)-3):
 	if (sdata[w][1] >= sdata[w-1][1]) and (sdata[w][1] > sdata[w-2][1]+3) and (sdata[w][1] >= sdata[w+1][1]) and (sdata[w][1] > sdata[w+2][1]+3): 
 		beats.append(sdata[w])
 		w += 1
-	elif (sdata[w][1] > sdata[w-1][1]+1) and (sdata[w][1] > sdata[w+1][1]+1): 
-		beats2.append(sdata[w])
-print("bpm = " + str(int(len(beats))))
-print("altbpm = " + str(int(len(beats))+ len(beats2)))
+print("bpm = " + str(int((len(beats))/(song_length_sec/60))))
 
 #for k in range (0,len(upper10)-2):
 #	if dif == 0:
